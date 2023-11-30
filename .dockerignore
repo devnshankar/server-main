@@ -1,0 +1,14 @@
+.dockerignore
+Dockerfile
+docker-compose.yml
+./tsconfig.json
+
+.git
+.gitignore
+.env
+
+./node_modules
+./testing
+./conf.d
+./ngrok/ngrok.exe
+./src

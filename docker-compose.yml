@@ -1,0 +1,120 @@
+version: "3.4"
+
+services:
+#! POSTGRESDB CONTAINER
+  postgres:
+    container_name: postgres
+    env_file:
+      - .env
+    image: postgres
+    restart: always
+    ports: 
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: gqlpostgresql
+      POSTGRES_DB: gqlpostgres
+    networks:
+      - ganhata-network
+
+#! MONGODB CONTAINER
+  mongo:
+    container_name: mongo
+    env_file:
+      - .env
+    image: mongo
+    ports:
+      - 27017:${MDB_PORT}
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MDB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MDB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MDB_NAME}
+    volumes:
+      - mongo_data:/data/db
+      # - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - ganhata-network
+  
+#! NODE-JS CONTAINER
+  # node-app:
+  #   # container_name: node-app
+  #   env_file:
+  #     - .env
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8080:${NODE_PORT}
+  #   depends_on:
+  #     - pg-admin
+  #   environment:
+  #     NODE_PORT: 8080
+  #     MONGO_URL: mongodb://admin:admin321@mongo:27017
+  #     GRAPHQL_PATH: /graphql
+  #   networks:
+  #     - ganhata-network
+
+# #! NGINX CONTAINER
+  # nginx: 
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./conf.d:/etc/nginx/conf.d
+  #   depends_on:
+  #     - node-app
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - ganhata-network
+
+#! MONGO-EXPRESS CONTAINER
+  mongo-express:
+    image: mongo-express
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - 8081:${ME_PORT}
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_ADMIN_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_ADMIN_PASSWORD}
+      ME_CONFIG_MONGODB_URL: ${ME_MDB_URL}
+      ME_CONFIG_MONGODB_PORT: ${ME_MDB_PORT}
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_BAUTH_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_BAUTH_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: ${ME_MDB_SERVER}
+    depends_on:
+      - mongo
+    networks:
+      - ganhata-network
+
+#! PG-ADMIN CONTAINER
+  pg-admin:
+    image: dpage/pgadmin4:6
+    env_file:
+      - .env
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGAD_DEF_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGAD_DEF_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGAD_PORT}
+    depends_on:
+      - mongo-express
+    ports: 
+      - "5050:${PGAD_PORT}"
+    networks:
+      - ganhata-network
+
+#! NETWORKS
+networks:
+  ganhata-network:
+    driver: bridge
+
+#! VOLUMES
+volumes:
+  mongo_data:
+  postgres_data:
