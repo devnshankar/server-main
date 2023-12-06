@@ -7,22 +7,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { expressMiddleware } from "@apollo/server/express4";
 import UserService from "../services/user.js";
-var NODE_PORT = process.env.NODE_PORT || 8083;
+import { expressMiddleware } from "@apollo/server/express4";
+let NODE_PORT = process.env.NODE_PORT || 8083;
 export function portManager(app, server) {
     const serverListener = (port) => {
         const pubPort = parseInt(port.toString());
         app.use("/graphql", expressMiddleware(server, {
             context: ({ req }) => __awaiter(this, void 0, void 0, function* () {
-                //@ts-ignore
-                const token = req.headers['token'];
+                const tokenWithBearer = req.headers["authorization"];
+                const token = tokenWithBearer.replace(/^Bearer\s/, "");
+                if (req.body.operationName === "CreateUser" ||
+                    req.body.operationName === "LoginUser") {
+                    return {};
+                }
+                if (!token) {
+                    throw new Error("Authorization failed no token . Please log in again.");
+                }
                 try {
                     const user = UserService.decodeJWTToken(token);
-                    return { user };
+                    const savedUser = yield UserService.getUserByEmail(user.email);
+                    if (user && user.email === savedUser.email) {
+                        return { user };
+                    }
+                    else {
+                        throw new Error("Authorization failed. Invalid user.");
+                    }
                 }
                 catch (error) {
-                    return {};
+                    console.error("Token decoding error:", error); // Log the error here
+                    throw new Error("Authorization failed. Invalid token.");
                 }
             }),
         }));
@@ -30,15 +44,7 @@ export function portManager(app, server) {
             console.log(`#  Server running | pid:${process.pid} | http://localhost:${port}/graphql`);
         });
         SERVER.on("error", (error) => {
-            const err = JSON.parse(JSON.stringify(error));
-            if (err.code === "EADDRINUSE") {
-                console.error(`Port ${port} is already in use. Trying a different port.`);
-                const newPort = parseInt(port.toString(), 10) + 2;
-                serverListener(newPort);
-            }
-            else {
-                console.error(`Error starting server on port ${port}: ${error.message}`);
-            }
+            console.error(`Server error: ${error.message}`);
         });
     };
     serverListener(NODE_PORT);

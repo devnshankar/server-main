@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// prisma/schema.prisma
+
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,16 +13,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Schema 
-// Here the @map is to save the objects as the underscore format
-model User {
-  id String @id @default(uuid())
-  firstName String @map("first_name")  
-  lastName String? @map("last_name")
-  profileImageURL String? @map("profile_image_url")
-  email String @unique
-  password String
-  salt String 
 
-  @@map("users")
+
+model User {
+  id             String   @id @default(uuid())
+  firstName      String
+  lastName       String
+  email          String?  @unique
+  password       String
+  phoneNumber    String?
+  salt           String 
+  profileImageUrl String?
+  address        String?
+  products       Product[]
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  token          String?
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  productImageUrl String?
+  owner       User    @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }

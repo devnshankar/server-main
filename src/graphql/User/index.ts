@@ -4,3 +4,4 @@ import { mutations } from "./mutations.user.js";
 import { resolvers } from "./resolvers.user.js";
 
 export const User = { typeDefs, queries, mutations, resolvers };
+

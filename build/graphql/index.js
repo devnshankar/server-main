@@ -9,22 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { ApolloServer } from "@apollo/server";
 import { User } from "./User/index.js";
+import { Product } from "./Product/index.js";
 function createApolloGraphqlServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const server = new ApolloServer({
-            typeDefs: `
+            typeDefs: `#graphql
       ${User.typeDefs}
+      ${Product.typeDefs}
       type Query {
         ${User.queries}
-
+        ${Product.queries}
       }
       type Mutation {
         ${User.mutations}
+        ${Product.mutations}
       }
     `,
             resolvers: {
-                Query: Object.assign({}, User.resolvers.queries),
-                Mutation: Object.assign({}, User.resolvers.mutations),
+                Query: Object.assign(Object.assign({}, User.resolvers.queries), Product.resolvers.queries),
+                Mutation: Object.assign(Object.assign({}, User.resolvers.mutations), Product.resolvers.mutations),
             },
         });
         yield server.start();

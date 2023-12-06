@@ -9,26 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import UserService from "../../services/user.js";
 const queries = {
-    getUserToken: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
-        const token = yield UserService.getUserToken({
-            email: payload.email,
-            password: payload.password,
-        });
-        return token;
+    getUser: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield UserService.getUserById(id);
     }),
-    getCurrentLoggedInUser: (_, parameters, context) => __awaiter(void 0, void 0, void 0, function* () {
-        if (context && context.user) {
-            const id = context.user.id;
-            const user = yield UserService.getUserById(id);
-            return user;
-        }
-        throw new Error("I don't know you brother");
+    getAllUsers: () => __awaiter(void 0, void 0, void 0, function* () {
+        return yield UserService.getAllUsers();
     }),
 };
 const mutations = {
     createUser: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
-        const res = yield UserService.createUser(payload);
-        return res.id;
+        return yield UserService.createUser(payload);
+    }),
+    loginUser: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
+        return UserService.loginUser(payload);
+    }),
+    updateUser: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield UserService.updateUser(payload);
+    }),
+    deleteUser: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield UserService.deleteUser(id);
     }),
 };
 export const resolvers = { queries, mutations };

@@ -1,34 +1,34 @@
-import UserService, { CreateUserPayload } from "../../services/user.js";
+import UserService, {
+  CreateUserPayload,
+  UpdateUserPayload,
+  LoginUserPayload,
+} from "../../services/user.js";
 
 const queries = {
-
-  getUserToken: async (
-    _: any,
-    payload: { email: string; password: string }
-  ) => {
-    const token = await UserService.getUserToken({
-      email: payload.email,
-      password: payload.password,
-    });
-    return token;
+  getUser: async (_: any, { id }: { id: string }) => {
+    return await UserService.getUserById(id);
   },
 
-
-  getCurrentLoggedInUser: async (_: any, parameters: any, context: any) => {
-    if(context && context.user){
-      const id = context.user.id
-      const user = await UserService.getUserById(id)
-      return user;
-    }
-    
-    throw new Error("I don't know you brother");
+  getAllUsers: async () => {
+    return await UserService.getAllUsers();
   },
 };
 
 const mutations = {
   createUser: async (_: any, payload: CreateUserPayload) => {
-    const res = await UserService.createUser(payload);
-    return res.id;
+    return await UserService.createUser(payload);
+  },
+
+  loginUser: async (_: any, payload: LoginUserPayload) => {
+    return UserService.loginUser(payload);
+  },
+
+  updateUser: async (_: any, payload: UpdateUserPayload) => {
+    return await UserService.updateUser(payload);
+  },
+
+  deleteUser: async (_: any, { id }: { id: string }) => {
+    return await UserService.deleteUser(id);
   },
 };
 
