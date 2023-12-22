@@ -1,5 +1,5 @@
-import { typeDefs } from "./typedefs.user.js";
-import { queries } from "./queries.user.js";
-import { mutations } from "./mutations.user.js";
-import { resolvers } from "./resolvers.user.js";
-export const User = { typeDefs, queries, mutations, resolvers };
+import { userTypeDefs } from "./typedefs.user.js";
+import { userQueries } from "./queries.user.js";
+import { userMutations } from "./mutations.user.js";
+import { userResolvers } from "./resolvers.user.js";
+export const User = { userTypeDefs, userQueries, userMutations, userResolvers };

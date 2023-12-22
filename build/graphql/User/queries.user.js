@@ -1,4 +1,4 @@
-export const queries = `#graphql
+export const userQueries = `#graphql
   getUser(id: ID!): User
   getAllUsers:[User]
 `;

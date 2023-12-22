@@ -1,31 +1,32 @@
-export const mutations = `#graphql
+export const userMutations = `#graphql
     createUser(
         firstName: String!
-        lastName: String
+        lastName: String!
         email: String!
         password: String!
         salt: String
-        phoneNumber: String
-        profileImageUrl: String
-        address: String
         token: String
+        phoneNumber: String
+        address: String
+        profileImageUrl: String
     ): User
 
-    loginUser(
-        email: String!
-        password: String!
-    ): User 
 
     updateUser(
         firstName: String
         lastName: String
         email: String
         password: String
-        phoneNumber: String
-        profileImageUrl: String
-        address: String
         token: String
+        phoneNumber: String
+        address: String
+        profileImageUrl: String
     ): User
+    
+    loginUser(
+        email: String!
+        password: String!
+    ): User 
     
     deleteUser(id: ID!): User
 `;

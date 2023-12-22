@@ -4,9 +4,9 @@ import UserService, {
   LoginUserPayload,
 } from "../../services/user.js";
 
-const queries = {
+const userQueries = {
   getUser: async (_: any, { id }: { id: string }) => {
-    return await UserService.getUserById(id);
+    return await UserService.getUser(id);
   },
 
   getAllUsers: async () => {
@@ -14,7 +14,7 @@ const queries = {
   },
 };
 
-const mutations = {
+const userMutations = {
   createUser: async (_: any, payload: CreateUserPayload) => {
     return await UserService.createUser(payload);
   },
@@ -32,4 +32,4 @@ const mutations = {
   },
 };
 
-export const resolvers = { queries, mutations };
+export const userResolvers = { userQueries, userMutations };

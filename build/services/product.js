@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// product.service.ts
 import { prismaClient } from "../config/prismaClient.config.js";
-import cloudinary from "cloudinary";
 class ProductService {
     static getAllProducts() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -20,44 +20,38 @@ class ProductService {
             return prismaClient.product.findUnique({ where: { id } });
         });
     }
-    static createProduct(ownerId, payload) {
+    static createProduct(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, description, price, productImageUrl } = payload;
-            // Upload product image to Cloudinary
-            let cloudinaryUrl;
-            if (productImageUrl) {
-                const result = yield cloudinary.v2.uploader.upload(productImageUrl);
-                cloudinaryUrl = result.secure_url;
-            }
-            // Create product in the database
-            return prismaClient.product.create({
+            const { ownerId, title, description = "", category, price, instock, isPublished = true, productImageUrl = "", } = payload;
+            const createdProduct = yield prismaClient.product.create({
                 data: {
                     title,
                     description,
+                    category,
                     price,
-                    productImageUrl: cloudinaryUrl,
-                    owner: { connect: { id: ownerId } }, // Connect the product to the owner
+                    instock,
+                    isPublished,
+                    productImageUrl,
+                    owner: { connect: { id: ownerId } },
                 },
+                include: { owner: true },
             });
+            return createdProduct;
         });
     }
-    static updateProduct(id, payload) {
+    static updateProduct(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, description, price, productImageUrl } = payload;
-            // Upload product image to Cloudinary
-            let cloudinaryUrl;
-            if (productImageUrl) {
-                const result = yield cloudinary.v2.uploader.upload(productImageUrl);
-                cloudinaryUrl = result.secure_url;
-            }
-            // Update product in the database
+            const { id, title, description, category, price, instock, isPublished, productImageUrl, } = payload;
             return prismaClient.product.update({
                 where: { id },
                 data: {
                     title,
                     description,
+                    category,
                     price,
-                    productImageUrl: cloudinaryUrl,
+                    instock,
+                    isPublished,
+                    productImageUrl,
                 },
             });
         });

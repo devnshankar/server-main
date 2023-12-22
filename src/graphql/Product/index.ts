@@ -1,6 +1,6 @@
-import { typeDefs } from "./typedefs.product.js";
-import { queries } from "./queries.product.js";
-import { mutations } from "./mutations.product.js";
-import { resolvers } from "./resolvers.product.js";
+import { productTypeDefs } from "./typedefs.product.js";
+import { productQueries } from "./queries.product.js";
+import { productMutations } from "./mutations.product.js";
+import { productResolvers } from "./resolvers.product.js";
 
-export const Product = { typeDefs, queries, mutations, resolvers };
+export const Product = { productTypeDefs, productQueries, productMutations, productResolvers };

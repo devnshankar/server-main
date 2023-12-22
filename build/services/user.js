@@ -13,15 +13,18 @@ import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 class UserService {
+    // USER SERVICE FUNCTION: GENERATE HASHED PASSWORD
     static generateHash(salt, password) {
         const hashedPassword = createHmac("sha256", salt)
             .update(password)
             .digest("hex");
         return hashedPassword;
     }
+    // USER SERVICE FUNCTION: DECODE JWT TOKEN AND RETURN DATA WRAPPED INSIDE
     static decodeJWTToken(token) {
         return jwt.verify(token, JWT_SECRET);
     }
+    // USER SERVICE FUNCTION: VERIFY USER CREDENTIAL, GENERATE AND RETURN JWT TOKEN
     static getUserToken(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = payload;
@@ -32,31 +35,43 @@ class UserService {
             const usersHashPassword = UserService.generateHash(userSalt, password);
             if (usersHashPassword !== user.password)
                 throw new GraphQLError("Incorrect Password");
-            // generate token
             const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
                 expiresIn: "30d",
             });
             return token;
         });
     }
+    // USER SERVICE FUNCTION: FIND AND RETURN ALL USERS
     static getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            return prismaClient.user.findMany();
+            return prismaClient.user.findMany({});
         });
     }
+    // USER SERVICE FUNCTION: FIND AND RETURN UNIQUE USER WITH EMAIL
     static getUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            return prismaClient.user.findUnique({ where: { email } });
+            return prismaClient.user.findUnique({
+                where: { email },
+                include: { products: true },
+            });
         });
     }
-    static getUserById(id) {
+    // USER SERVICE FUNCTION: FIND AND RETURN UNIQUE USER WITH ID
+    static getUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return prismaClient.user.findUnique({ where: { id } });
+            return prismaClient.user.findUnique({
+                where: { id },
+                include: { products: true },
+            });
         });
     }
+    // USER SERVICE FUNCTION: CREATE AND RETURN NEW USER
     static createUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { firstName, lastName = "", email, password, phoneNumber, profileImageUrl, address, token = "", } = payload;
+            const { firstName, lastName, email, password, token = "", phoneNumber, address, profileImageUrl, } = payload;
+            console.log(lastName);
+            const stringifiedLastName = lastName ? lastName.toString() : "";
+            console.log(JSON.stringify({ firstName, lastName, email, password }, null, 2));
             const user = yield UserService.getUserByEmail(email);
             if (!!user)
                 throw new GraphQLError("A user is already registered with the email", {
@@ -64,13 +79,12 @@ class UserService {
                         code: "USER_ALREADY_EXISTS",
                     },
                 });
-            // encrypt password
             const salt = randomBytes(32).toString("hex");
             const hashedPassword = UserService.generateHash(salt, password);
             return yield prismaClient.user.create({
                 data: {
                     firstName,
-                    lastName,
+                    lastName: stringifiedLastName,
                     email,
                     password: hashedPassword,
                     salt: salt,
@@ -82,6 +96,7 @@ class UserService {
             });
         });
     }
+    // USER SERVICE FUNCTION: VERIFY USER CREDENTIAL, GENERATE NEW TOKEN, UPDATE AND RETURN USER
     static loginUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = payload;
@@ -95,41 +110,49 @@ class UserService {
             const userSalt = user.salt;
             const usersHashPassword = UserService.generateHash(userSalt, password);
             if (usersHashPassword !== user.password)
-                throw new GraphQLError("The password doesn't matchd", {
+                throw new GraphQLError("The password doesn't match", {
                     extensions: {
                         code: "INCORRECT_PASSWORD",
                     },
                 });
             const authToken = yield UserService.getUserToken({ email, password });
-            return yield UserService.updateUser({
+            console.log(authToken);
+            console.log("user retrieved from database", user);
+            yield UserService.updateUser({
                 firstName: user.firstName,
                 lastName: user.lastName,
-                phoneNumber: user.phoneNumber,
                 email: user.email,
-                profileImageUrl: user.profileImageUrl,
-                address: user.address,
                 token: authToken,
+                phoneNumber: user.phoneNumber,
+                address: user.address,
+                profileImageUrl: user.profileImageUrl,
             });
+            return yield UserService.getUser(user.id);
         });
     }
+    // USER SERVICE FUNCTION: UPDATE USER CREDENTIAL
     static updateUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { firstName, lastName, phoneNumber, email, password, profileImageUrl, address, token, } = payload;
-            return prismaClient.user.update({
+            const { firstName, lastName, email, password, token, phoneNumber, address, profileImageUrl, } = payload;
+            const updatedUserData = {
+                firstName,
+                lastName,
+                email,
+                password,
+                token,
+                phoneNumber,
+                address,
+                profileImageUrl: profileImageUrl !== undefined ? profileImageUrl : null,
+            };
+            console.log("updatedUserData", updatedUserData);
+            yield prismaClient.user.update({
                 where: { email },
-                data: {
-                    firstName,
-                    lastName,
-                    phoneNumber,
-                    email,
-                    password,
-                    profileImageUrl,
-                    address,
-                    token,
-                },
+                data: updatedUserData,
             });
+            return yield UserService.getUserByEmail(email);
         });
     }
+    // USER SERVICE FUNCTION: DELETE USER WITH UNIQUE ID
     static deleteUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return prismaClient.user.delete({

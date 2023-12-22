@@ -1,31 +1,26 @@
+// resolvers.product.js
 import ProductService, {
   CreateProductPayload,
   UpdateProductPayload,
 } from "../../services/product.js";
 
-const queries = {
+const productQueries = {
+  getProduct: async (_: any, { id }: { id: string }) => {
+    return await ProductService.getProductById(id);
+  },
+
   getAllProducts: async () => {
     return await ProductService.getAllProducts();
   },
-
-  getProductById: async (_: any, { id }: { id: string }) => {
-    return await ProductService.getProductById(id);
-  },
 };
 
-const mutations = {
-  createProduct: async (
-    _: any,
-    { ownerId, payload }: { ownerId: string; payload: CreateProductPayload }
-  ) => {
-    return await ProductService.createProduct(ownerId, payload);
+const productMutations = {
+  createProduct: async (_: any, payload: CreateProductPayload) => {
+    return await ProductService.createProduct(payload);
   },
 
-  updateProduct: async (
-    _: any,
-    { id, payload }: { id: string; payload: UpdateProductPayload }
-  ) => {
-    return await ProductService.updateProduct(id, payload);
+  updateProduct: async (_: any, payload: UpdateProductPayload) => {
+    return await ProductService.updateProduct(payload);
   },
 
   deleteProduct: async (_: any, { id }: { id: string }) => {
@@ -33,4 +28,4 @@ const mutations = {
   },
 };
 
-export const resolvers = { queries, mutations };
+export const productResolvers = { productQueries, productMutations };

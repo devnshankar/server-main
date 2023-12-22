@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// prisma/schema.prisma
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,32 +7,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
-  id             String   @id @default(uuid())
-  firstName      String
-  lastName       String
-  email          String?  @unique
-  password       String
-  phoneNumber    String?
-  salt           String 
-  profileImageUrl String?
-  address        String?
-  products       Product[]
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  token          String?
+  id              String         @id @default(uuid())
+  firstName       String         @map("first_name")
+  lastName        String         @map("last_name")
+  email           String?        @unique
+  password        String
+  salt            String
+  token           String?
+  phoneNumber     String?        @map("phone_number")
+  address         String?
+  profileImageUrl String?        @map("profile_image_url")
+  products        Product[] // One-to-Many relationship with products (posts)
+  cart            OrderItem[] // One-to-Many relationship with order items (cart)
+  notifications   Notification[]
+  orders          Order[] // One-to-Many relationship with orders (seller)
+  comments        Comment[]
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  @@map("users_table")
 }
 
 model Product {
-  id          String  @id @default(uuid())
+  id              String      @id @default(uuid())
+  title           String
+  description     String
+  category        String
+  price           Int
+  instock         Int
+  isPublished     Boolean     @default(true) @map("is_published")
+  owner           User        @relation(fields: [ownerId], references: [id])
+  ownerId         String      @map("owner_id") 
+  productImageUrl String?     @map("product_image_url")
+  reviews         Review[]
+  comments        Comment[]
+  cart            OrderItem[] // One-to-Many relationship with order items (cart)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@map("products_table")
+}
+
+model Review {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @map("product_id")
+  stars     Int
+
+  @@map("reviews_table")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String   @map("product_id")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("comments_table")
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
   title       String
   description String
-  price       Float
-  productImageUrl String?
-  owner       User    @relation(fields: [ownerId], references: [id])
-  ownerId     String
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("notifications_table")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String   @map("product_id")
+  quantity  Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String   @map("order_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("order_items_table")
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @map("user_id") // Seller's id
+  products  OrderItem[] // One-to-Many relationship with order items
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  status    String // Pending, Completed, etc.
+  productId String?
+
+  @@map("orders_table")
 }

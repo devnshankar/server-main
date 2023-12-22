@@ -1,4 +1,5 @@
-export const queries = `#graphql
+// queries.product.js
+export const productQueries = `#graphql
+  getProduct(id: ID!): Product
   getAllProducts: [Product]
-  getProductById(id: ID!): Product
 `;

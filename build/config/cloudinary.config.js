@@ -10,8 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { v2 as cloudinary } from "cloudinary";
 export const cloudinaryConfig = () => __awaiter(void 0, void 0, void 0, function* () {
     cloudinary.config({
+        secure: true,
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 });
+export const opts = {
+    overwrite: true,
+    invalidate: true,
+    resource_type: 'auto',
+};

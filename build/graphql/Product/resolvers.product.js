@@ -7,24 +7,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// resolvers.product.js
 import ProductService from "../../services/product.js";
-const queries = {
+const productQueries = {
+    getProduct: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ProductService.getProductById(id);
+    }),
     getAllProducts: () => __awaiter(void 0, void 0, void 0, function* () {
         return yield ProductService.getAllProducts();
     }),
-    getProductById: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield ProductService.getProductById(id);
-    }),
 };
-const mutations = {
-    createProduct: (_, { ownerId, payload }) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield ProductService.createProduct(ownerId, payload);
+const productMutations = {
+    createProduct: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ProductService.createProduct(payload);
     }),
-    updateProduct: (_, { id, payload }) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield ProductService.updateProduct(id, payload);
+    updateProduct: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield ProductService.updateProduct(payload);
     }),
     deleteProduct: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
         return yield ProductService.deleteProduct(id);
     }),
 };
-export const resolvers = { queries, mutations };
+export const productResolvers = { productQueries, productMutations };

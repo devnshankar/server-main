@@ -8,15 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import UserService from "../../services/user.js";
-const queries = {
+const userQueries = {
     getUser: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield UserService.getUserById(id);
+        return yield UserService.getUser(id);
     }),
     getAllUsers: () => __awaiter(void 0, void 0, void 0, function* () {
         return yield UserService.getAllUsers();
     }),
 };
-const mutations = {
+const userMutations = {
     createUser: (_, payload) => __awaiter(void 0, void 0, void 0, function* () {
         return yield UserService.createUser(payload);
     }),
@@ -30,4 +30,4 @@ const mutations = {
         return yield UserService.deleteUser(id);
     }),
 };
-export const resolvers = { queries, mutations };
+export const userResolvers = { userQueries, userMutations };
