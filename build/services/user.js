@@ -69,9 +69,11 @@ class UserService {
     static createUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { firstName, lastName, email, password, token = "", phoneNumber, address, profileImageUrl, } = payload;
-            console.log(lastName);
+            // console.log(lastName);
             const stringifiedLastName = lastName ? lastName.toString() : "";
-            console.log(JSON.stringify({ firstName, lastName, email, password }, null, 2));
+            // console.log(
+            //   JSON.stringify({ firstName, lastName, email, password }, null, 2)
+            // );
             const user = yield UserService.getUserByEmail(email);
             if (!!user)
                 throw new GraphQLError("A user is already registered with the email", {
@@ -116,8 +118,8 @@ class UserService {
                     },
                 });
             const authToken = yield UserService.getUserToken({ email, password });
-            console.log(authToken);
-            console.log("user retrieved from database", user);
+            // console.log(authToken);
+            // console.log("user retrieved from database", user);
             yield UserService.updateUser({
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -144,7 +146,7 @@ class UserService {
                 address,
                 profileImageUrl: profileImageUrl !== undefined ? profileImageUrl : null,
             };
-            console.log("updatedUserData", updatedUserData);
+            // console.log("updatedUserData", updatedUserData);
             yield prismaClient.user.update({
                 where: { email },
                 data: updatedUserData,

@@ -102,11 +102,11 @@ class UserService {
       address,
       profileImageUrl,
     } = payload;
-    console.log(lastName);
+    // console.log(lastName);
     const stringifiedLastName: string = lastName ? lastName.toString() : "";
-    console.log(
-      JSON.stringify({ firstName, lastName, email, password }, null, 2)
-    );
+    // console.log(
+    //   JSON.stringify({ firstName, lastName, email, password }, null, 2)
+    // );
     const user = await UserService.getUserByEmail(email);
     if (!!user)
       throw new GraphQLError("A user is already registered with the email", {
@@ -150,8 +150,8 @@ class UserService {
         },
       });
     const authToken = await UserService.getUserToken({ email, password });
-    console.log(authToken);
-    console.log("user retrieved from database", user);
+    // console.log(authToken);
+    // console.log("user retrieved from database", user);
     await UserService.updateUser({
       firstName: user.firstName,
       lastName: user.lastName,
@@ -197,7 +197,8 @@ class UserService {
       profileImageUrl: profileImageUrl !== undefined ? profileImageUrl : null,
     };
 
-    console.log("updatedUserData", updatedUserData);
+    // console.log("updatedUserData", updatedUserData);
+  
 
     await prismaClient.user.update({
       where: { email },
