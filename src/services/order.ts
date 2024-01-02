@@ -19,7 +19,7 @@ class OrderService {
       const createdOrder = await prisma.order.create({
         data: {
           user: { connect: { id: userId } },
-          products: { connect: productIds.map((id) => ({ id })) },
+          // products: { connect: productIds.map((id) => ({ id })) },
           status: "Pending", // Provide the default status or set it based on your business logic
         },
       });

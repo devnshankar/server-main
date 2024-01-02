@@ -41,9 +41,10 @@ class ProductService {
       price,
       instock,
       isPublished = true,
-      productImageUrl = "",
+      productImageUrl,
     } = payload;
-
+    // ERROR pay attentiion to this
+    console.log(JSON.stringify(payload, null , 2))
     const createdProduct = await prismaClient.product.create({
       data: {
         title,

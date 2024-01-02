@@ -3,9 +3,11 @@ import { prismaClient } from "../config/prismaClient.config.js";
 import { GraphQLError } from "graphql";
 
 export interface CreateOrderItemPayload {
-  userId: string;
-  productId: string;
+  userId: string;  //id of the user trying to add the product to it's cart
+  productId: string;  //id of the product being added to the cart
   quantity: number;
+  price: number;
+  productImageUrl: string;
 }
 
 export interface UpdateOrderItemPayload {
@@ -26,34 +28,23 @@ class OrderItemService {
 
   // ORDER ITEM SERVICE FUNCTION: CREATE AND RETURN NEW ORDER ITEM
   public static async createOrderItem(payload: CreateOrderItemPayload) {
-    const { userId, productId, quantity } = payload;
+    const { userId, productId, quantity, price , productImageUrl } = payload;
 
-    // Replace this with your actual logic to get the orderId
-    const orderId = await prismaClient.order.findFirst({
-      where: {
-        userId: userId,
-        status: "OPEN", // Add conditions based on your order model
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!orderId) {
-      // You may want to handle the case where there is no open order for the user
-      throw new Error("No open order found for the user");
-    }
-
+    // const orderId = "";  //find order id when updating it while creating order
     return await prismaClient.orderItem.create({
       data: {
-        userId,
-        productId,
+        user: { connect: { id: userId } },
+        product: { connect: { id: productId } },
         quantity,
-        orderId: orderId.id, // Include the orderId in the create data
+        price, 
+        productImageUrl
+
+        // order: { connect: { id: orderId } }, // Include the orderId in the create data
       },
+      include: { user: true, product: true },
     });
   }
-  
+
   // ORDER ITEM SERVICE FUNCTION: UPDATE ORDER ITEM DETAILS
   public static async updateOrderItem(payload: UpdateOrderItemPayload) {
     const { id, quantity } = payload;

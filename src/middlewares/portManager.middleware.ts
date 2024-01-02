@@ -1,7 +1,9 @@
+//portManager.middleware.ts
 import express from "express";
 import UserService from "../services/user.js";
 import { expressMiddleware } from "@apollo/server/express4";
 import * as jwt from "jsonwebtoken"; // Import your JwtPayload type
+import path from "path";
 
 let NODE_PORT: string | number = process.env.NODE_PORT || 8083;
 
@@ -46,6 +48,12 @@ export function portManager(app: express.Express, server: any) {
       })
     );
 
+    
+    app.use(
+      "/photos",
+      express.static(path.join("C:/Users/subha/OneDrive/Desktop/final/server-main/src/photos"))
+    );
+    
     const SERVER = app.listen(pubPort, "0.0.0.0", () => {
       console.log(
         `#  Server running | pid:${process.pid} | http://localhost:${port}/graphql`

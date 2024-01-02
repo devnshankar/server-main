@@ -7,8 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+//portManager.middleware.ts
+import express from "express";
 import UserService from "../services/user.js";
 import { expressMiddleware } from "@apollo/server/express4";
+import path from "path";
 let NODE_PORT = process.env.NODE_PORT || 8083;
 export function portManager(app, server) {
     const serverListener = (port) => {
@@ -40,6 +43,7 @@ export function portManager(app, server) {
                 }
             }),
         }));
+        app.use("/photos", express.static(path.join("C:/Users/subha/OneDrive/Desktop/final/server-main/src/photos")));
         const SERVER = app.listen(pubPort, "0.0.0.0", () => {
             console.log(`#  Server running | pid:${process.pid} | http://localhost:${port}/graphql`);
         });

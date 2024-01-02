@@ -2,10 +2,15 @@
 export const orderItemTypeDefs = `#graphql
   type OrderItem {
     id: ID!
+    userId: String!
     user: User
+    productId: String!
     product: Product
     quantity: Int
-    order: Order
+    productImageUrl: String
+    price: Int!
+    # orderId: String!
+    # order: Order
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -20,6 +25,9 @@ export const orderItemTypeDefs = `#graphql
       userId: String!
       productId: String!
       quantity: Int!
+      productImageUrl: String
+      price: Int!
+      # orderId: String!
     ): OrderItem
 
     updateOrderItem(

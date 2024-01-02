@@ -21,7 +21,7 @@ CREATE TABLE "products_table" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "categoryId" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "instock" INTEGER NOT NULL,
     "is_published" BOOLEAN NOT NULL DEFAULT true,
@@ -31,15 +31,6 @@ CREATE TABLE "products_table" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "products_table_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "categories_table" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "categories_table_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -78,8 +69,9 @@ CREATE TABLE "order_items_table" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "product_id" TEXT NOT NULL,
+    "product_image_url" TEXT,
+    "price" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
-    "order_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -102,9 +94,6 @@ CREATE TABLE "orders_table" (
 CREATE UNIQUE INDEX "users_table_email_key" ON "users_table"("email");
 
 -- AddForeignKey
-ALTER TABLE "products_table" ADD CONSTRAINT "products_table_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories_table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "products_table" ADD CONSTRAINT "products_table_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users_table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -124,9 +113,6 @@ ALTER TABLE "order_items_table" ADD CONSTRAINT "order_items_table_user_id_fkey" 
 
 -- AddForeignKey
 ALTER TABLE "order_items_table" ADD CONSTRAINT "order_items_table_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products_table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "order_items_table" ADD CONSTRAINT "order_items_table_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "orders_table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "orders_table" ADD CONSTRAINT "orders_table_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users_table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

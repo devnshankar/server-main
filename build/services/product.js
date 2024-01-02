@@ -22,7 +22,9 @@ class ProductService {
     }
     static createProduct(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { ownerId, title, description = "", category, price, instock, isPublished = true, productImageUrl = "", } = payload;
+            const { ownerId, title, description = "", category, price, instock, isPublished = true, productImageUrl, } = payload;
+            // ERROR pay attentiion to this
+            console.log(JSON.stringify(payload, null, 2));
             const createdProduct = yield prismaClient.product.create({
                 data: {
                     title,

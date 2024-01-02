@@ -25,28 +25,18 @@ class OrderItemService {
     // ORDER ITEM SERVICE FUNCTION: CREATE AND RETURN NEW ORDER ITEM
     static createOrderItem(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { userId, productId, quantity } = payload;
-            // Replace this with your actual logic to get the orderId
-            const orderId = yield prismaClient.order.findFirst({
-                where: {
-                    userId: userId,
-                    status: "OPEN", // Add conditions based on your order model
-                },
-                select: {
-                    id: true,
-                },
-            });
-            if (!orderId) {
-                // You may want to handle the case where there is no open order for the user
-                throw new Error("No open order found for the user");
-            }
+            const { userId, productId, quantity, price, productImageUrl } = payload;
+            // const orderId = "";  //find order id when updating it while creating order
             return yield prismaClient.orderItem.create({
                 data: {
-                    userId,
-                    productId,
+                    user: { connect: { id: userId } },
+                    product: { connect: { id: productId } },
                     quantity,
-                    orderId: orderId.id, // Include the orderId in the create data
+                    price,
+                    productImageUrl
+                    // order: { connect: { id: orderId } }, // Include the orderId in the create data
                 },
+                include: { user: true, product: true },
             });
         });
     }

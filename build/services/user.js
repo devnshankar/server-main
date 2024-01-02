@@ -52,7 +52,12 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             return prismaClient.user.findUnique({
                 where: { email },
-                include: { products: true },
+                include: {
+                    products: true,
+                    cart: true,
+                    notifications: true,
+                    orders: true,
+                },
             });
         });
     }
@@ -61,7 +66,12 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             return prismaClient.user.findUnique({
                 where: { id },
-                include: { products: true },
+                include: {
+                    products: true,
+                    cart: true,
+                    notifications: true,
+                    orders: true,
+                },
             });
         });
     }

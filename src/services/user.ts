@@ -69,16 +69,19 @@ class UserService {
 
   // USER SERVICE FUNCTION: FIND AND RETURN ALL USERS
   public static async getAllUsers() {
-    return prismaClient.user.findMany({
-
-    });
+    return prismaClient.user.findMany({});
   }
 
   // USER SERVICE FUNCTION: FIND AND RETURN UNIQUE USER WITH EMAIL
   public static async getUserByEmail(email: string) {
     return prismaClient.user.findUnique({
       where: { email },
-      include: { products: true },
+      include: {
+        products: true,
+        cart: true,
+        notifications: true,
+        orders: true,
+      },
     });
   }
 
@@ -86,7 +89,12 @@ class UserService {
   public static async getUser(id: string) {
     return prismaClient.user.findUnique({
       where: { id },
-      include: { products: true },
+      include: {
+        products: true,
+        cart: true,
+        notifications: true,
+        orders: true,
+      },
     });
   }
 
@@ -198,7 +206,6 @@ class UserService {
     };
 
     // console.log("updatedUserData", updatedUserData);
-  
 
     await prismaClient.user.update({
       where: { email },

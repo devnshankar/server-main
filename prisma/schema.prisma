@@ -87,9 +87,11 @@ model OrderItem {
   userId    String   @map("user_id")
   product   Product  @relation(fields: [productId], references: [id])
   productId String   @map("product_id")
+  productImageUrl String?     @map("product_image_url")
+  price           Int
   quantity  Int
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String   @map("order_id")
+  // order     Order    @relation(fields: [orderId], references: [id])
+  // orderId   String   @map("order_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -100,7 +102,7 @@ model Order {
   id        String      @id @default(uuid())
   user      User        @relation(fields: [userId], references: [id])
   userId    String      @map("user_id") // Seller's id
-  products  OrderItem[] // One-to-Many relationship with order items
+  // products  OrderItem[] // One-to-Many relationship with order items
   createdAt DateTime    @default(now()) @map("created_at")
   updatedAt DateTime    @updatedAt @map("updated_at")
   status    String // Pending, Completed, etc.
